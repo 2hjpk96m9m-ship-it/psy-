@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵魂引力场 | 异性吸引力深度测评</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --primary: #7a67ee; --secondary: #a29bfe; --bg: #fdfbff; --text: #333; --card-bg: rgba(255,255,255,0.92); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+               background: linear-gradient(135deg, #f5f7fa 0%,#c3cfe2 100%); color: var(--text);
+               display: flex; justify-content: center; min-height: 100vh; }
+        #container { width: 100%; max-width: 500px; padding: 20px; margin-top: 20px; }
+
+        /* 封面 */
+        #cover-section { display: flex; flex-direction: column; align-items: center;
+                         justify-content: center; min-height: 80vh; text-align: center; }
+        .cover-title { font-size: 32px; color: var(--primary); margin-bottom: 10px; letter-spacing: 2px; }
+        .cover-subtitle { font-size: 16px; color: #666; margin-bottom: 40px; }
+        .cover-btn { padding: 15px 40px; background: var(--primary); color: #fff; border: none;
+                     border-radius: 30px; font-size: 18px; cursor: pointer; transition: .3s; }
+        .cover-btn:hover { background: #6a56d6; transform: scale(1.03); }
+
+        /* 加载 */
+        .loading { display: flex; flex-direction: column; align-items: center;
+                   justify-content: center; min-height: 60vh; }
+        .loading-bar { width: 200px; height: 4px; background: #eee; border-radius: 2px;
+                       overflow: hidden; margin-bottom: 15px; }
+        .loading-bar-inner { height: 100%; background: var(--primary); width: 20%;
+                             animation: loading 1.5s infinite; }
+        @keyframes loading { 0%{transform:translateX(-100%);} 100%{transform:translateX(300%);} }
+
+        /* 答题卡 */
+        .card { background: var(--card-bg); padding: 25px; border-radius: 24px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.07); backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.3); min-height: 80vh;
+                display: flex; flex-direction: column; justify-content: center; }
+        .progress-bar { width: 100%; height: 6px; background: #eee; border-radius: 3px;
+                        margin-bottom: 20px; overflow: hidden; }
+        #progress-inner { height: 100%; background: var(--primary); width: 5%; transition: width .3s ease; }
+        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
+        .option-btn { display: block; width: 100%; padding: 14px 20px; margin-bottom: 12px;
+                      border: 2px solid #f0f0f0; border-radius: 14px; background: #fff; cursor: pointer;
+                      font-size: 15px; text-align: left; transition: .2s; color: var(--text); }
+        .option-btn:hover { border-color: var(--primary); background: #f8f7ff; transform: translateX(3px); }
+        .option-btn.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+        .nav-btn { padding: 10px 20px; border: 1px solid var(--primary); border-radius: 20px;
+                   background: #fff; color: var(--primary); cursor: pointer; transition: .2s; }
+        .nav-btn:disabled { opacity: .5; cursor: not-allowed; }
+        .nav-btn:hover:not(:disabled) { background: var(--primary); color: #fff; }
+
+        /* 结果 */
+        #result-section { display: none; }
+        .result-title { font-size: 22px; margin-bottom: 10px; color: var(--primary); text-align: center; }
+        .tag { display: inline-block; padding: 4px 12px; background: var(--primary); color: #fff;
+               border-radius: 20px; font-size: 14px; margin-bottom: 15px; }
+        .radar-box { margin: 20px 0; background: #fff; padding: 10px; border-radius: 15px; }
+        .analysis-card { background: #f8f9ff; padding: 20px; border-radius: 15px;
+                         font-size: 15px; line-height: 1.8; margin-bottom: 15px; }
+        .dimension-detail { background: #fff; padding: 15px; border-radius: 12px;
+                            margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .dimension-title { font-weight: 600; color: var(--primary); margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="cover-section">
+        <div class="cover-title">✨ 灵魂引力场</div>
+        <div class="cover-subtitle">基于心理投射的异性吸引力深度探测</div>
+        <button class="cover-btn" onclick="startQuiz()">开始测试</button>
+    </div>
+
+    <div id="loading-section" class="loading" style="display:none;">
+        <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+        <div>正在加载引力场...</div>
+    </div>
+
+    <div id="quiz-section" class="card" style="display:none;">
+        <div class="progress-bar"><div id="progress-inner"></div></div>
+        <div id="question-box">
+            <div class="question-text" id="q-text"></div>
+            <div id="options-box"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prev-btn" onclick="prevQuestion()" disabled>上一题</button>
+            <button class="nav-btn" id="next-btn" onclick="nextQuestion()">下一题</button>
+        </div>
+    </div>
+
+    <div id="result-section" class="card">
+        <div style="text-align:center;">
+            <div class="tag" id="user-tag">获取称号中...</div>
+            <div class="result-title">测评报告已生成</div>
+        </div>
+        <div class="radar-box"><canvas id="radarChart"></canvas></div>
+        <div class="analysis-card" id="analysis-text"></div>
+        <div id="dimensions-details"></div>
+        <button class="option-btn" style="text-align:center; margin-top:20px; border-color:var(--primary);"
+                onclick="location.reload()">重新测试</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+    { q:"1. 在空旷的艺术馆，你会被哪种风格的展厅吸引？", options:[
+        { text:"A. 暗调的光影装置", score:[3,5,4,3,2,5,6,4] },
+        { text:"B. 明亮的纯白极简", score:[5,6,5,5,4,3,3,6] },
+        { text:"C. 充满烟火气的复古杂货铺", score:[4,4,4,6,6,4,2,5] },
+        { text:"D. 抽象且夸张的艺术涂鸦", score:[4,3,6,4,3,6,5,3] },
+        { text:"E. 静谧的水墨山水留白", score:[6,5,5,6,3,4,4,5] }
+    ]},
+    { q:"2. 如果你是一种香水，你觉得你的后调是？", options:[
+        { text:"A. 温暖的木质檀香", score:[6,5,3,6,4,5,4,5] },
+        { text:"B. 清甜的红茶果香", score:[4,4,5,5,6,6,2,6] },
+        { text:"C. 清冷的雪松薄荷", score:[6,5,5,5,3,4,5,5] },
+        { text:"D. 浓郁的玫瑰沉香", score:[3,6,4,4,5,5,6,6] },
+        { text:"E. 淡雅的白桃乌龙", score:[5,5,5,6,5,5,3,5] }
+    ]},
+    { q:"3. 深夜独自看电影，你会选择哪种结局？", options:[
+        { text:"A. 遗憾的错过", score:[5,3,6,4,2,6,6,3] },
+        { text:"B. 温暖的重逢", score:[3,5,4,6,6,5,2,6] },
+        { text:"C. 开放式的留白", score:[6,5,6,5,3,6,6,3] },
+        { text:"D. 荒诞且搞笑的反转", score:[2,5,3,5,6,4,3,5] },
+        { text:"E. 悲壮的自我牺牲", score:[4,4,5,5,3,5,5,4] }
+    ]},
+    { q:"4. 面对初次见面的异性，你通常会？", options:[
+        { text:"A. 礼貌点头，等对方开口", score:[6,4,6,4,2,4,5,3] },
+        { text:"B. 主动微笑，寻找话题", score:[4,6,4,5,6,6,2,6] },
+        { text:"C. 眼神躲闪，假装看手机", score:[3,5,5,4,5,3,3,3] },
+        { text:"D. 自信打量对方，建立气场", score:[5,6,4,6,4,5,6,6] },
+        { text:"E. 保持距离，礼貌疏离", score:[6,3,6,6,3,4,5,4] }
+    ]},
+    { q:"5. 你的书架上，哪种书的比例最高？", options:[
+        { text:"A. 哲学或社科评论", score:[4,4,3,6,3,4,6,6] },
+        { text:"B. 诗歌或艺术画册", score:[6,4,5,5,4,5,3,6] },
+        { text:"C. 轻松的治愈系散文", score:[5,5,4,5,6,5,5,5] },
+        { text:"D. 实用的技能/考证类", score:[3,3,5,4,5,6,4,3] },
+        { text:"E. 悬疑/推理小说", score:[4,4,5,5,5,5,5,4] }
+    ]},
+    { q:"6. 发现有人在远处偷拍你，你的第一直觉是？", options:[
+        { text:"A. 感到冒犯并躲避", score:[6,2,6,4,2,2,6,2] },
+        { text:"B. 内心窃喜但装不知道", score:[5,6,4,5,6,6,4,6] },
+        { text:"C. 过去对视，大方微笑", score:[6,6,6,4,6,5,2,4] },
+        { text:"D. 觉得被认可，继续保持状态", score:[4,6,5,3,4,4,6,5] },
+        { text:"E. 假装没看见，快速离开", score:[5,4,6,4,3,3,5,3] }
+    ]},
+    { q:"7. 如果你是一个季节，你觉得自己是？", options:[
+        { text:"A. 清冷的初冬", score:[6,5,6,4,3,5,6,4] },
+        { text:"B. 热烈的盛夏", score:[3,6,2,5,6,6,2,6] },
+        { text:"C. 凉爽的深秋", score:[5,6,4,5,5,5,4,6] },
+        { text:"D. 温暖的初春", score:[3,4,6,6,4,6,5,5] },
+        { text:"E. 多雨的梅雨季", score:[6,3,5,5,2,4,6,4] }
+    ]},
+    { q:"8. 你更喜欢哪种沟通方式？", options:[
+        { text:"A. 深夜的长篇文字", score:[5,3,6,6,3,6,5,3] },
+        { text:"B. 随时的语音或视频", score:[3,6,3,5,6,5,2,6] },
+        { text:"C. 见面时的眼神交流", score:[6,5,6,4,5,4,6,6] },
+        { text:"D. 简单的表情包/短句", score:[2,3,4,5,5,3,3,3] },
+        { text:"E. 写信/便签", score:[4,4,5,5,4,5,5,6] }
+    ]},
+    { q:"9. 哪种异性的特质最能击中你？", options:[
+        { text:"A. 极致的专业与冷静", score:[3,4,2,5,4,5,6,6] },
+        { text:"B. 不经意的温柔与细心", score:[6,6,5,6,6,6,3,5] },
+        { text:"C. 放荡不羁的自由灵魂", score:[4,3,6,5,3,6,6,6] },
+        { text:"D. 强大的保护欲与占有欲", score:[5,5,3,4,5,6,4,4] },
+        { text:"E. 通透的共情与理解", score:[4,4,5,6,5,5,5,6] }
+    ]},
+    { q:"10. 在派对中，你通常处于什么状态？", options:[
+        { text:"A. 在角落观察每个人", score:[5,3,6,6,2,4,6,3] },
+        { text:"B. 在人群中分享趣事", score:[3,6,2,5,6,6,2,6] },
+        { text:"C. 和一两个好友贴贴", score:[4,5,5,4,5,5,2,6] },
+        { text:"D. 穿梭于各种圈子搞社交", score:[6,4,5,4,6,4,6,4] },
+        { text:"E. 提前离场，回家独处", score:[5,3,6,6,2,3,5,4] }
+    ]},
+    { q:"11. 如果你能拥有一个超能力，你会选？", options:[
+        { text:"A. 读心术", score:[4,6,3,6,5,6,5,6] },
+        { text:"B. 隐身术", score:[6,3,6,4,2,3,6,3] },
+        { text:"C. 瞬间移动", score:[5,4,5,5,3,5,4,5] },
+        { text:"D. 暂停时间", score:[3,6,4,4,5,5,6,4] },
+        { text:"E. 治愈能力", score:[4,5,5,6,5,6,2,6] }
+    ]},
+    { q:"12. 你会因为什么而爱上一个人？", options:[
+        { text:"A. 瞬间的磁场吸引", score:[5,6,4,4,5,6,6,4] },
+        { text:"B. 长期的细节感动", score:[4,5,3,6,6,6,2,6] },
+        { text:"C. 灵魂深处的共鸣", score:[6,4,5,5,4,5,5,6] },
+        { text:"D. 物质或现实条件", score:[2,3,5,4,5,4,3,5] },
+        { text:"E. 对方的崇拜与依赖", score:[3,6,4,5,6,5,4,5] }
+    ]},
+    { q:"13. 你如何处理自己的负面情绪？", options:[
+        { text:"A. 独自消化，不愿示人", score:[6,4,6,6,2,3,6,3] },
+        { text:"B. 寻找信任的人倾诉", score:[3,6,3,6,6,6,2,6] },
+        { text:"C. 通过运动/购物发泄", score:[5,5,5,4,5,5,5,5] },
+        { text:"D. 自我消化，转化为动力", score:[6,3,5,5,4,5,6,4] },
+        { text:"E. 写日记/画画，记录情绪", score:[4,4,5,6,3,4,6,5] }
+    ]},
+    { q:"14. 你更偏爱的穿衣色系是？", options:[
+        { text:"A. 黑白灰棕", score:[6,5,6,6,3,4,6,3] },
+        { text:"B. 彩色或柔和色", score:[3,6,3,5,6,6,2,6] },
+        { text:"C. 低饱和度的莫兰迪色", score:[5,6,4,6,5,6,4,6] },
+        { text:"D. 鲜艳的撞色", score:[3,4,6,4,5,5,5,6] },
+        { text:"E. 牛仔/工装的大地色", score:[4,5,5,5,6,4,3,5] }
+    ]},
+    { q:"15. 当异性称赞你“特别”，你觉得是在赞美什么？", options:[
+        { text:"A. 独一无二的思想", score:[4,4,3,6,4,6,6,6] },
+        { text:"B. 与众不同的气质", score:[6,6,5,5,5,5,4,6] },
+        { text:"C. 可爱有趣的灵魂", score:[5,6,4,6,6,5,5,5] },
+        { text:"D. 独立清醒的态度", score:[6,4,6,4,3,6,6,4] },
+        { text:"E. 温柔包容的教养", score:[4,5,5,6,6,5,2,6] }
+    ]},
+    { q:"16. 你更向往哪种恋爱状态？", options:[
+        { text:"A. 势均力敌的博弈", score:[5,6,4,5,4,6,6,4] },
+        { text:"B. 毫无保留的治愈", score:[4,6,3,6,6,6,2,6] },
+        { text:"C. 互不打扰的陪伴", score:[6,5,5,5,5,5,5,6] },
+        { text:"D. 轰轰烈烈的热恋", score:[3,6,3,4,6,6,6,5] },
+        { text:"E. 细水长流的陪伴", score:[4,5,5,6,6,4,2,6] }
+    ]},
+    { q:"17. 如果明天是世界末日，你最想？", options:[
+        { text:"A. 去海边独自看日落", score:[6,3,6,5,2,4,6,2] },
+        { text:"B. 和爱的人疯狂派对", score:[3,6,2,5,6,6,2,6] },
+        { text:"C. 和家人吃最后一顿饭", score:[4,5,5,6,6,5,2,6] },
+        { text:"D. 一个人安静地告别", score:[6,4,6,6,2,3,6,4] },
+        { text:"E. 完成一件一直想做的事", score:[5,6,4,4,5,6,5,5] }
+    ]},
+    { q:"18. 哪种动物最能代表你的恋爱观？", options:[
+        { text:"A. 高傲的猫", score:[6,5,6,4,3,6,6,3] },
+        { text:"B. 忠诚的犬", score:[3,6,3,5,6,6,2,6] },
+        { text:"C. 自由的鹰", score:[6,4,6,5,2,5,6,4] },
+        { text:"D. 温柔的鹿", score:[4,5,5,6,5,5,2,6] },
+        { text:"E. 神秘的狐", score:[5,6,4,4,5,6,6,5] }
+    ]},
+    { q:"19. 你觉得一段感情中最吸引人的是？", options:[
+        { text:"A. 未知的神秘感", score:[4,6,5,4,4,6,6,4] },
+        { text:"B. 绝对的安全感", score:[5,5,3,6,6,5,2,6] },
+        { text:"C. 灵魂的共鸣感", score:[6,4,6,6,5,5,5,6] },
+        { text:"D. 荷尔蒙的冲动", score:[3,6,4,4,6,6,6,5] },
+        { text:"E. 互相成就的成长", score:[4,5,5,5,5,6,4,6] }
+    ]},
+    { q:"20. 你会为了喜欢的人改变自己的外在吗？", options:[
+        { text:"A. 绝不，我只做自己", score:[6,4,6,6,2,3,6,2] },
+        { text:"B. 会尝试微调，展现美感", score:[4,6,3,5,5,6,2,6] },
+        { text:"C. 会为了对方彻底改变", score:[2,5,4,4,6,6,2,6] },
+        { text:"D. 只改变让自己更舒服的部分", score:[5,5,5,5,5,5,4,5] },
+        { text:"E. 偶尔尝试新风格", score:[4,6,4,4,5,6,2,5] }
+    ]}
+];
+
+let currentIdx = 0;
+let answers = Array(questions.length).fill(null);
+let totalScores = [0,0,0,0,0,0,0,0];
+const dimensionNames = [
+    "外在气质呈现",
+    "综合吸引力",
+    "第一印象得分",
+    "性格魅力指数",
+    "异性缘表现",
+    "恋爱适配度",
+    "致命吸引力",
+    "灵魂契合类型"
+];
+
+function startQuiz(){
+    document.getElementById('cover-section').style.display='none';
+    document.getElementById('loading-section').style.display='flex';
+    setTimeout(()=>{
+        document.getElementById('loading-section').style.display='none';
+        document.getElementById('quiz-section').style.display='flex';
+        loadQuestion();
+    },1400);
+}
+
+function loadQuestion(){
+    const q=questions[currentIdx];
+    document.getElementById('q-text').innerText=q.q;
+    document.getElementById('progress-inner').style.width=((currentIdx+1)/questions.length*100)+'%';
+    const box=document.getElementById('options-box'); box.innerHTML='';
+    q.options.forEach((opt,idx)=>{
+        const b=document.createElement('button');
+        b.className='option-btn'+(answers[currentIdx]===idx?' selected':'');
+        b.innerText=opt.text;
+        b.onclick=()=>{ answers[currentIdx]=idx; loadQuestion(); };
+        box.appendChild(b);
+    });
+    document.getElementById('prev-btn').disabled=currentIdx===0;
+    document.getElementById('next-btn').innerText=currentIdx===questions.length-1?'查看结果':'下一题';
+}
+
+function prevQuestion(){ if(currentIdx>0){ currentIdx--; loadQuestion(); } }
+function nextQuestion(){
+    if(answers[currentIdx]===null){ alert('请先选择一个选项哦~'); return; }
+    if(currentIdx<questions.length-1){ currentIdx++; loadQuestion(); } else { calc(); showResult(); }
+}
+
+function calc(){
+    totalScores=[0,0,0,0,0,0,0,0];
+    for(let i=0;i<questions.length;i++){
+        const opt=questions[i].options[answers[i]];
+        for(let d=0;d<8;d++) totalScores[d]+=opt.score[d];
+    }
+}
+
+function showResult(){
+    document.getElementById('quiz-section').style.display='none';
+    document.getElementById('result-section').style.display='block';
+    const final=totalScores.map(s=>{
+        let p=Math.round((s/120)*100);
+        return Math.max(50,Math.min(100,p));
+    });
+    const avg=Math.round(final.reduce((a,b)=>a+b,0)/8);
+    new Chart(document.getElementById('radarChart').getContext('2d'),{
+        type:'radar', data:{ labels:dimensionNames, datasets:[{
+            label:'引力值', data:final, backgroundColor:'rgba(122,103,238,0.2)',
+            borderColor:'rgba(122,103,238,1)', borderWidth:2, pointBackgroundColor:'rgba(122,103,238,1)'
+        }]}, options:{ scales:{r:{beginAtZero:true,max:100,ticks:{display:false}}}, plugins:{legend:{display:false}}}
+    });
+    let title,analysis;
+    const mx=Math.max(...final),mi=final.indexOf(mx);
+    if(mi===0||mi===2){ title="清冷系·高岭之花";
+        analysis="因为你在选择中更偏向内敛、独立与克制，性格里自带疏离与高级感，所以你在异性眼中安静又有距离，这种清冷气质让你显得神秘又耐看，容易吸引成熟、稳重、有内涵的人。";
+    }else if(mi===6||mi===5){ title="禁忌系·引力黑洞";
+        analysis="因为你在选择中更偏爱浓烈、直接、有张力的表达，性格里有强烈的自我与吸引力，所以你自带让人无法抗拒的魅力，擅长情绪拉扯，容易让人一眼沦陷、越陷越深，是极具占有欲的类型。";
+    }else{ title="治愈系·人间微光";
+        analysis="因为你在选择中更重视温暖、陪伴与共情，性格温柔稳定、体贴包容，所以你给人极强的安全感和舒适感，相处起来轻松治愈，是让人想长期靠近、依赖和珍惜的类型。";
+    }
+    document.getElementById('user-tag').innerText=title;
+    document.getElementById('analysis-text').innerHTML=analysis+`<br><br><strong>综合吸引力指数：</strong> ${avg}分`;
+
+    document.getElementById('dimensions-details').innerHTML=final.map((sc,i)=>`
+    <div class="dimension-detail">
+        <div class="dimension-title">${dimensionNames[i]}：${sc}分</div>
+        <div>${getFullDesc(i,sc)}</div>
+    </div>`).join('');
+}
+
+function getFullDesc(idx,score){
+    const s=score;
+    if(idx===0){
+        if(s>=85) return "你在选择中更偏爱简约、高级、有格调的风格，说明你审美稳定、气质干净，外在呈现自带高级感与辨识度，举止得体、气场舒展，很容易在人群中被一眼注意到，气质远胜于普通打扮的人。";
+        if(s>=70) return "你在选择中偏向舒适、耐看、有质感的路线，说明你气质温和舒服，不刻意张扬也不随意敷衍，外在呈现干净自然，给人舒服耐看的印象，长期相处会越来越有魅力。";
+        if(s>=55) return "你在选择中更注重实用与内心感受，说明你气质偏低调内敛，不追求夸张外表，外在呈现朴实自然，虽然不抢眼，但胜在真实、踏实、不做作，相处越久越让人觉得可靠。";
+        return "你在选择中更偏向内敛、低调、不张扬的风格，说明你气质偏安静、内敛，不太在意外在表现，外在呈现朴素低调，虽然不够抢眼，但胜在真实、沉稳、有自己的节奏。";
+    }
+    if(idx===1){
+        if(s>=85) return "你在选择中展现出强烈的自我风格与情绪张力，说明你综合吸引力极强，性格鲜明、气场突出，不管是外表还是谈吐都很有记忆点，很容易让人一见钟情，持续被你吸引。";
+        if(s>=70) return "你在选择中平衡了舒适与个性，说明你综合吸引力稳定在线，性格温柔又不失棱角，让人觉得舒服又有魅力，相处越久越能发现你的优点，吸引力持续上升。";
+        if(s>=55) return "你在选择中更偏向踏实、内敛、不张扬，说明你综合吸引力偏温和，不是第一眼惊艳型，但胜在真诚、稳重、可靠，靠长期相处慢慢打动别人，属于耐看型吸引力。";
+        return "你在选择中更偏向低调、内敛、被动，说明你综合吸引力偏温和内敛，不擅长主动展示自己，容易被忽略，但胜在真诚、简单、不做作，熟悉之后会让人觉得很安心。";
+    }
+    if(idx===2){
+        if(s>=85) return "你在选择中更偏向鲜明、独特、有气场的表达，说明你第一印象极强，性格外放有张力，举止自信得体，很容易在初次见面时就留下深刻、惊艳、难以忘记的印象，让人瞬间记住你。";
+        if(s>=70) return "你在选择中偏向温和、大方、有礼貌的表达，说明你第一印象舒服亮眼，性格温柔得体、不尖锐、不张扬，初次见面让人觉得亲切好接近，留下温和、舒服、值得信任的印象。";
+        if(s>=55) return "你在选择中更偏向安静、内敛、慢热，说明你第一印象偏平淡温和，性格不张扬、不抢镜，初次见面不会特别抢眼，但给人安静、踏实、不具攻击性的舒服感受。";
+        return "你在选择中更偏向被动、回避、慢热，说明你第一印象偏低调安静，性格内敛害羞，不太主动表达自己，初次见面容易被忽略，但给人温柔、无害、踏实的感觉。";
+    }
+    if(idx===3){
+        if(s>=85) return "你在选择中展现出通透、独立、有思想的特质，说明你性格魅力极强，有主见、有温度、有边界感，既懂得照顾别人情绪，也保持自我节奏，和你相处永远不会无聊，让人越相处越上瘾。";
+        if(s>=70) return "你在选择中偏向温柔、共情、稳重，说明你性格魅力稳定突出，体贴包容、情绪稳定、懂得倾听，让人觉得非常安心可靠，是身边人都愿意依赖和信任的温暖存在。";
+        if(s>=55) return "你在选择中更偏向真实、低调、不刻意讨好，说明你性格魅力偏内敛踏实，不擅长花哨表达，但真诚简单、情绪稳定，不耍心机，让人觉得放心、靠谱、值得长期相处。";
+        return "你在选择中更偏向内敛、慢热、被动，说明你性格魅力偏安静低调，不擅长主动表达情绪，内心细腻敏感，不太外露，熟悉之后才能感受到你的温柔、真诚与可靠。";
+    }
+    if(idx===4){
+        if(s>=85) return "你在选择中更偏向主动、大方、有气场，说明你异性缘极强，性格自信舒展、不扭捏、不敏感，很容易吸引异性关注，暗恋者与欣赏者众多，在异性眼里是亮眼、迷人、想接近的存在。";
+        if(s>=70) return "你在选择中偏向温和、体贴、好相处，说明你异性缘稳定不错，性格温柔舒服、没有攻击性，让人很容易产生好感，身边常有默默喜欢你、欣赏你的人，异性缘一直在线。";
+        if(s>=55) return "你在选择中更偏向低调、内敛、慢热，说明你异性缘偏温和普通，性格不张扬、不主动，不太擅长展示魅力，异性缘不算突出，但胜在真诚踏实，熟悉后会被慢慢喜欢。";
+        return "你在选择中更偏向被动、回避、独立，说明你异性缘偏低调，性格内敛安静、不太主动社交，在异性面前不够外放，容易被忽略，但胜在真实简单，遇到懂你的人会非常珍惜你。";
+    }
+    if(idx===5){
+        if(s>=85) return "你在选择中重视共情、浪漫与深度连接，说明你恋爱适配度极高，性格温柔懂爱、会提供情绪价值，既能给对方安全感，也能制造浪漫与心动，和你恋爱会非常幸福、上瘾、舍不得离开。";
+        if(s>=70) return "你在选择中偏向稳定、陪伴、真诚，说明你恋爱适配度很高，性格踏实体贴、情绪稳定、不任性，能给伴侣长久的安全感与陪伴，是非常适合长期恋爱、走向稳定关系的人。";
+        if(s>=55) return "你在选择中更偏向真实、克制、不轻易投入，说明你恋爱适配度中等，性格偏理性慢热，不会盲目恋爱，对待感情认真谨慎，虽然不够浪漫，但足够真诚、负责、可靠。";
+        return "你在选择中更偏向独立、克制、被动，说明你恋爱适配度偏温和，性格内敛慢热，不太擅长表达爱意，在感情里偏被动谨慎，需要对方主动带动，但一旦认真就非常专一真诚。";
+    }
+    if(idx===6){
+        if(s>=85) return "你在选择中展现出神秘、鲜明、有张力的特质，说明你致命吸引力极强，性格有棱角、有故事感，自带让人无法抗拒的神秘感与诱惑感，容易让人一眼沦陷、明知危险仍忍不住靠近。";
+        if(s>=70) return "你在选择中偏向独特、有气质、有个性，说明你致命吸引力突出，性格不随波逐流，气质自带记忆点，让人不自觉被吸引，越了解越觉得你迷人、有深度、无法替代。";
+        if(s>=55) return "你在选择中更偏向真实、低调、不刻意，说明你致命吸引力偏温和耐看，不靠张扬外表，而是靠踏实、真诚、温柔打动人，虽然不惊艳，但越相处越让人觉得安心、离不开。";
+        return "你在选择中更偏向内敛、低调、克制，说明你致命吸引力偏温和内敛，不靠外在张力吸引人，而是靠内心的真诚、简单、稳重打动人，属于细水长流、越相处越有味道的类型。";
+    }
+    if(idx===7){
+        if(s>=85) return "你在选择中追求灵魂共鸣、深度理解与势均力敌，说明你最适合灵魂同频、成熟通透的人，你重视精神连接，性格独立又温柔，能和对方互相理解、彼此成就，走长久稳定的深度关系。";
+        if(s>=70) return "你在选择中偏向温暖、陪伴、治愈与安全感，说明你最适合温柔体贴、情绪稳定的人，你性格包容善良，重视陪伴与安心感，能和对方互相滋养、彼此治愈，建立舒服长久的关系。";
+        if(s>=55) return "你在选择中更偏向真实、踏实、细水长流，说明你最适合稳重可靠、简单真诚的人，你性格务实低调，不追求浓烈刺激，喜欢平淡安稳的关系，能在长久陪伴中获得幸福与安心。";
+        return "你在选择中更偏向独立、安静、慢热，说明你最适合温和耐心、懂你尊重你的人，你性格内敛敏感，需要慢慢靠近、慢慢了解，不喜欢急促浓烈的关系，细水长流才最适合你。";
+    }
+    return "你的性格特质在这一项上表现稳定，整体温和真实，踏实而有力量。";
+}
+</script>
+</body>
+</html>
