@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>灵魂引力场 | 异性吸引力深度探测</title>
+    <title>灵魂引力场 | 异性吸引力深度探测 - 星座星盘版</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #7a67ee; --secondary: #a29bfe; --bg: #f5f7fa; --text: #333; --card-bg: rgba(255,255,255,0.96); }
+        :root { --primary: #7a67ee; --secondary: #a29bfe; --bg: #f5f7fa; --text: #333; --card-bg: rgba(255,255,255,0.98); }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
                background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); color: var(--text);
@@ -16,83 +16,97 @@
         /* 授权码遮罩 */
         #auth-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:99999; display:flex; justify-content:center; align-items:center; }
         .auth-card { background:white; padding:40px 30px; border-radius:28px; box-shadow:0 15px 35px rgba(0,0,0,0.1); width:90%; max-width:360px; text-align:center; }
-        .auth-input { width:100%; padding:14px; border:2px solid #eee; border-radius:12px; text-align:center; margin-bottom:15px; font-size:18px; letter-spacing:2px; outline:none; transition:0.3s; }
-        .auth-input:focus { border-color: var(--primary); }
+        .auth-input, .date-input { width:100%; padding:14px; border:2px solid #eee; border-radius:12px; text-align:center; margin-bottom:15px; font-size:18px; letter-spacing:2px; outline:none; transition:0.3s; }
+        .auth-input:focus, .date-input:focus { border-color: var(--primary); }
 
         /* 卡片通用布局 */
-        .card { background: var(--card-bg); padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); min-height: 80vh; display: flex; flex-direction: column; }
-        #cover-section { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .card { background: var(--card-bg); padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); min-height: 80vh; display: flex; flex-direction: column; position: relative; }
+        #cover-section, #zodiac-section { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         
         /* 按钮与进度 */
-        .btn-main { padding: 16px 45px; background: var(--primary); color: #fff; border: none; border-radius: 35px; cursor: pointer; font-size: 18px; font-weight:600; transition: .3s; box-shadow: 0 8px 20px rgba(122,103,238,0.3); }
+        .btn-main { padding: 16px 45px; background: var(--primary); color: #fff; border: none; border-radius: 35px; cursor: pointer; font-size: 18px; font-weight:600; transition: .3s; box-shadow: 0 8px 20px rgba(122,103,238,0.3); width: 100%; }
         .btn-main:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(122,103,238,0.4); }
-        .option-btn { display: block; width: 100%; padding: 15px 20px; margin-bottom: 12px; border: 1.5px solid #efefef; border-radius: 16px; background: #fff; cursor: pointer; transition: .2s; text-align: left; line-height: 1.4; font-size: 15px; }
+        .option-btn { display: block; width: 100%; padding: 16px 20px; margin-bottom: 12px; border: 1.5px solid #efefef; border-radius: 16px; background: #fff; cursor: pointer; transition: .2s; text-align: left; line-height: 1.4; font-size: 15px; color: #444; }
         .option-btn:hover { border-color: var(--primary); background: #f8f7ff; transform: scale(1.01); }
+        .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
         .progress-bar { width: 100%; height: 4px; background: #eee; border-radius: 2px; margin-bottom: 25px; }
         #progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width .4s ease; }
 
         /* 结果解析 */
         .radar-box { margin: 15px 0; background: #fff; padding: 15px; border-radius: 20px; }
-        .analysis-text { background: #f9f9ff; padding: 20px; border-radius: 18px; font-size: 14.5px; line-height: 1.8; border-left: 6px solid var(--primary); color: #444; }
+        .analysis-text { background: #f9f9ff; padding: 20px; border-radius: 18px; font-size: 14.5px; line-height: 1.8; color: #444; margin-bottom: 15px; }
+        .dimension-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); }
     </style>
 </head>
 <body>
 
 <div id="auth-overlay">
     <div class="auth-card">
-        <div style="font-size:40px; margin-bottom:10px;">🛡️</div>
-        <h2 style="color:var(--primary); margin-bottom:8px;">引力授权验证</h2>
-        <p style="font-size:13px; color:#999; margin-bottom:25px;">请输入唯一的6位授权码开启探测</p>
+        <div style="font-size:40px; margin-bottom:10px;">🌌</div>
+        <h2 style="color:var(--primary); margin-bottom:8px;">解锁灵魂引力</h2>
+        <p style="font-size:13px; color:#999; margin-bottom:25px;">请输入唯一的6位授权码</p>
         <input type="text" id="auth-input" class="auth-input" maxlength="6" placeholder="000000">
-        <button onclick="verifyCode()" class="btn-main" style="width:100%;">确认解锁</button>
-        <p id="auth-error" style="color:#ff4d4f; font-size:12px; margin-top:12px; display:none;">⚠️ 授权码无效或已被使用</p>
+        <button onclick="verifyCode()" class="btn-main">确认验证</button>
+        <p id="auth-error" style="color:#ff4d4f; font-size:12px; margin-top:12px; display:none;">⚠️ 授权码无效</p>
+    </div>
+</div>
+
+<div id="zodiac-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:99990; display:flex; justify-content:center; align-items:center;">
+    <div class="auth-card">
+        <div style="font-size:40px; margin-bottom:10px;">♈</div>
+        <h2 style="color:var(--primary); margin-bottom:8px;">确定你的星宿</h2>
+        <p style="font-size:13px; color:#999; margin-bottom:25px;">请选择你的出生日期，以确定星座属性</p>
+        <input type="date" id="date-input" class="date-input" value="2000-01-01">
+        <button onclick="confirmZodiac()" class="btn-main">激活星盘</button>
     </div>
 </div>
 
 <div id="container" style="display:none;">
     <div id="cover-section" class="card">
+        <span style="font-size:48px; margin-bottom:10px;">✨</span>
         <h1 style="color:var(--primary); font-size:32px; margin-bottom:15px; letter-spacing:1px;">灵魂引力场</h1>
-        <p style="color:#777; line-height:1.6; margin-bottom:40px; padding:0 20px;">这是一次通往潜意识深处的航行。<br>你的每一个直觉，都在重新定义你的吸引力坐标。</p>
-        <button class="btn-main" onclick="startQuiz()">进入潜意识</button>
+        <p style="color:#777; line-height:1.7; margin-bottom:40px; padding:0 25px;">你的星宿已归位。这是一次通往潜意识深处的航行，你的每一个直觉，都在重新定义你的吸引力坐标。</p>
+        <button class="btn-main" onclick="startQuiz()">开始探测</button>
     </div>
 
     <div id="quiz-section" class="card" style="display:none;">
         <div class="progress-bar"><div id="progress-fill"></div></div>
-        <div id="q-text" style="font-size:19px; font-weight:600; margin-bottom:25px; min-height:60px;"></div>
+        <div id="q-text" style="font-size:19px; font-weight:600; margin-bottom:25px; color:#333; min-height:60px; line-height:1.4;"></div>
         <div id="options-box" style="flex-grow:1;"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-            <button onclick="prevQuestion()" id="prev-btn" style="background:none; border:none; color:#bbb; cursor:pointer; font-size:14px;">← 返回上一步</button>
+            <button onclick="prevQuestion()" id="prev-btn" style="background:none; border:none; color:#bbb; cursor:pointer; font-size:14px; font-family:sans-serif;">← 上一步</button>
             <span id="progress-num" style="font-size:13px; color:#999; font-weight:bold;"></span>
         </div>
     </div>
 
-    <div id="result-section" class="card" style="display:none; min-height:auto; padding-bottom:40px;">
-        <div style="text-align:center; margin-bottom:20px;">
-            <span id="result-tag" style="background:var(--primary); color:white; padding:6px 16px; border-radius:20px; font-size:14px; font-weight:bold;"></span>
-            <h2 style="margin-top:15px; color:var(--primary);">吸引力图谱报告</h2>
+    <div id="result-section" class="card" style="display:none; padding-bottom:40px;">
+        <div style="text-align:center; margin-bottom:15px;">
+            <span id="result-tag" style="background:var(--primary); color:white; padding:6px 16px; border-radius:20px; font-size:13px; font-weight:bold; letter-spacing:1px;"></span>
+            <h2 id="result-title" style="margin-top:10px; color:var(--primary); font-size:24px;">测评报告已生成</h2>
         </div>
         <div class="radar-box"><canvas id="radarChart"></canvas></div>
-        <div class="analysis-text" id="analysis-content"></div>
-        <button class="btn-main" style="margin-top:20px; width:100%; background:none; border:2px solid var(--primary); color:var(--primary); box-shadow:none;" onclick="location.reload()">重新航行</button>
+        
+        <div class="analysis-text" id="zodiac-analysis" style="border-left:6px solid #ffcc00; background:#fffdf5;"></div>
+        
+        <div class="analysis-text" id="deep-analysis" style="border-left:6px solid var(--primary);"></div>
+        
+        <div id="dimensions-details"></div>
+        
+        <button class="btn-main" style="margin-top:25px; background:none; border:2px solid var(--primary); color:var(--primary); box-shadow:none;" onclick="location.reload()">重新航行</button>
     </div>
 </div>
 
 <script>
-// 🔑 50个随机生成的6位授权码
-const PASS_CODES = [
-    "102938", "556210", "883921", "447201", "339182", "662541", "991023", "228745", "773612", "551982",
-    "402193", "882736", "119203", "334512", "667829", "990182", "223456", "778102", "554321", "441122",
-    "889900", "112233", "665544", "337788", "994422", "221100", "776655", "550099", "442288", "883311",
-    "116677", "339922", "661144", "997733", "225588", "772299", "558811", "443366", "881122", "114455",
-    "330066", "662288", "993355", "226611", "774400", "551133", "448822", "885566", "117799", "332211"
-];
+// 🔑 50个随机生成的6位授权码 (保持不变)
+const PASS_CODES = ["102938","556210","883921","447201","339182","662541","991023","228745","773612","551982","402193","882736","119203","334512","667829","990182","223456","778102","554321","441122","889900","112233","665544","337788","994422","221100","776655","550099","442288","883311","116677","339922","661144","997733","225588","772299","558811","443366","881122","114455","330066","662288","993355","226611","774400","551133","448822","885566","117799","332211"];
 
+// 1. 验证授权码
 function verifyCode() {
     const code = document.getElementById('auth-input').value.trim();
     if(PASS_CODES.includes(code)) {
         document.getElementById('auth-overlay').style.display = 'none';
-        document.getElementById('container').style.display = 'block';
+        document.getElementById('zodiac-overlay').style.display = 'flex'; // 成功后，弹出星座输入层
     } else {
         const err = document.getElementById('auth-error');
         err.style.display = 'block';
@@ -100,105 +114,165 @@ function verifyCode() {
     }
 }
 
-// 20道深度心理投射题
+// 2. 星座计算与激活
+let userZodiac = "";
+function confirmZodiac() {
+    const dateStr = document.getElementById('date-input').value;
+    if(!dateStr){alert('请输入有效出生日期哦~');return;}
+    const date = new Date(dateStr);
+    userZodiac = getZodiac(date.getMonth()+1, date.getDate());
+    document.getElementById('zodiac-overlay').style.display = 'none';
+    document.getElementById('container').style.display = 'block';
+}
+
+function getZodiac(m, d) {
+    const sig = "摩羯水瓶双鱼白羊金牛双子巨蟹狮子处女天平天蝎射手摩羯";
+    const bounds = [20,19,21,20,21,22,23,23,23,24,23,22];
+    const zodiacs = ["摩羯座","水瓶座","双鱼座","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座"];
+    return zodiacs[d < bounds[m-1] ? m-1 : m];
+}
+
+// --------------------------------------------------
+// 3. 20道深度星座意象心理题 (原创，拒绝选项雷同)
+// --------------------------------------------------
 const questions = [
-    { q:"1. 独自走在无人的长廊，尽头有一面镜子，你觉得镜子里的你正在？", options:[
-        { t:"面无表情地注视着你", s:[15,10,20,5,2,8,18,10] },
-        { t:"背对着你，正在梳头", s:[5,12,10,18,15,5,20,15] },
-        { t:"对你露出一个诡异的微笑", s:[8,20,8,5,10,15,22,5] },
-        { t:"镜子里空无一人", s:[20,5,15,10,5,10,12,20] }
+    { q:"1. 独自走在无人的长廊，尽头有一面镜子，你觉得镜子里的你正在？ (白羊/狮子/天蝎意象)", options:[
+        { t:"对你露出一个诡异的微笑 (白羊：直接的挑衅)", s:[12,20,10,5,10,15,22,5] },
+        { t:"背对着你，正在梳头 (巨蟹/双鱼：内敛的神秘)", s:[5,12,12,18,15,8,20,15] },
+        { t:"面无表情地注视着你 (金牛/摩羯：冷静的克制)", s:[18,10,20,8,2,8,18,12] },
+        { t:"镜子里空无一人 (水瓶：极致的疏离)", s:[20,5,18,12,5,10,12,20] }
     ]},
-    { q:"2. 如果你必须在一个废弃的房间住一晚，你选择？", options:[
-        { t:"堆满旧书和灰尘的阁楼", s:[12,8,10,20,5,12,10,22] },
-        { t:"挂满摇晃风铃的露台", s:[10,15,18,12,18,10,5,10] },
-        { t:"有一张暗红色天鹅绒床的卧室", s:[5,20,8,15,12,20,22,5] },
-        { t:"空荡荡只有一把椅子的客厅", s:[18,5,15,10,2,5,15,12] }
+    { q:"2. 如果你被允许在一个废弃的房间住一晚，你选择？ (金牛/双子/巨蟹意象)", options:[
+        { t:"有一张暗红色天鹅绒床的卧室 (天蝎/金牛：感官与占有)", s:[8,20,8,15,12,20,22,8] },
+        { t:"堆满旧书和灰尘的阁楼 (处女/水瓶：知性与深度)", s:[15,8,10,22,5,12,10,25] },
+        { t:"挂满摇晃风铃的露台 (双子/天秤：灵动与审美)", s:[10,15,18,12,20,10,5,12] },
+        { t:"空荡荡只有一把椅子的客厅 (摩羯：极简与孤独)", s:[20,5,15,10,2,5,15,12] }
     ]},
-    { q:"3. 森林里下起了雨，你发现一朵从未见过的花，它的味道是？", options:[
-        { t:"混合着泥土的清苦", s:[15,10,12,18,5,12,15,20] },
-        { t:"过分甜腻的腐烂果香", s:[5,20,10,8,15,18,22,5] },
-        { t:"像刚洗过的床单一样干净", s:[12,12,20,12,20,10,5,12] },
-        { t:"没有任何味道", s:[20,5,15,10,2,5,12,15] }
+    { q:"3. 如果必须在一个雨夜把灵魂抵押出去，你觉得对方是？ (天蝎/双鱼意象)", options:[
+        { t:"一个穿着黑西装、眼神冷静的老绅士 (处女/摩羯原型)", s:[20,5,12,20,2,5,15,18] },
+        { t:"一个面目模糊、只在耳边说话的影子 (双子/水瓶原型)", s:[12,18,15,15,10,10,20,15] },
+        { t:"一个浑身冰冷、身上有玫瑰味道的女人 (天蝎原型)", s:[5,22,8,12,12,20,25,8] },
+        { t:"一个哭泣的、跟你长得一模一样的小孩 (巨蟹原型)", s:[15,10,10,10,18,22,5,15] }
     ]},
-    { q:"4. 一个陌生异性递给你一封信，要求你当面拆开，你的反应是？", options:[
-        { t:"紧盯着对方的眼睛拆开", s:[10,22,12,15,10,18,20,12] },
-        { t:"有些局促地低下头拆开", s:[5,12,18,10,20,12,5,10] },
-        { t:"礼貌拒绝，等对方离开再看", s:[18,5,10,20,5,10,12,15] },
-        { t:"开玩笑地问：是情书吗？", s:[8,18,15,12,22,20,8,8] }
+    { q:"4. 森林里下起了雨，你发现一朵从未见过的花，它的味道是？ (金牛/巨蟹/双鱼意象)", options:[
+        { t:"过分甜腻的腐烂果香 (金牛/天蝎意象)", s:[5,20,10,8,15,18,22,5] },
+        { t:"像刚洗过的床单一样干净 (巨蟹/天秤意象)", s:[15,12,20,12,20,10,5,12] },
+        { t:"混合着泥土的清苦 (处女/摩羯意象)", s:[18,10,12,18,5,12,15,20] },
+        { t:"没有任何味道 (水瓶意象)", s:[20,5,15,10,2,5,12,15] }
     ]},
-    { q:"5. 你觉得你的灵魂深处，住着哪种天气？", options:[
-        { t:"暴雨前的极度闷热", s:[8,15,8,12,10,18,22,10] },
-        { t:"深秋午后微凉的阳光", s:[18,12,15,18,20,15,5,18] },
-        { t:"大雾弥漫的清晨", s:[20,10,20,15,5,10,15,12] },
-        { t:"划破黑夜的闪电", s:[5,22,10,10,12,15,20,8] }
+    { q:"5. 你觉得你的灵魂深处，住着哪种天气？ (四象属性投射)", options:[
+        { t:"暴雨前的极度闷热 (火象白羊/狮子/射手：直接的热烈)", s:[8,20,8,12,10,18,22,10] },
+        { t:"深秋午后微凉的阳光 (土象金牛/处女/摩羯：稳定的温和)", s:[18,12,15,18,20,15,5,18] },
+        { t:"划破黑夜的闪电 (火象/风象：灵动与冲击)", s:[5,22,10,15,12,15,20,8] },
+        { t:"大雾弥漫的清晨 (水象巨蟹/天蝎/双鱼：深邃的神秘)", s:[20,10,20,15,5,10,15,12] }
     ]},
-    { q:"6. 在梦中，你拥有一双异瞳，左眼看穿人心，右眼？", options:[
-        { t:"能看见过去", s:[15,8,12,20,5,12,10,22] },
-        { t:"能看见谎言", s:[12,15,15,15,10,15,18,12] },
-        { t:"能看见欲望", s:[5,22,8,12,15,20,22,8] },
-        { t:"只是一片纯白", s:[20,5,20,10,2,5,10,18] }
+    { q:"6. 如果爱是一场谋杀，你宁愿自己是？ (天蝎/白羊的占有与破坏)", options:[
+        { t:"心甘情愿的被害者 (巨蟹/双鱼的自我牺牲)", s:[5,15,8,10,18,22,20,5] },
+        { t:"冷酷且不留痕迹的凶手 (天蝎/处女的理性占有)", s:[12,20,10,18,5,12,22,10] },
+        { t:"冷静录入案宗的警察 (摩羯/处女的理智秩序)", s:[20,5,15,22,5,8,10,18] },
+        { t:"路过却没报警的目击者 (双子/水瓶的旁观心态)", s:[15,10,18,12,10,10,15,18] }
     ]},
-    { q:"7. 你最无法忍受异性对你做什么？", options:[
-        { t:"居高临下的审视", s:[20,10,15,22,2,8,15,15] },
-        { t:"自以为是的讨好", s:[15,12,18,15,5,10,12,18] },
-        { t:"毫无底线的窥探", s:[18,15,12,12,10,15,22,10] },
-        { t:"漫不经心的忽视", s:[5,22,8,8,20,18,18,5] }
+    { q:"7. 一条异性递给你的项链，装在漆黑的盒子里，你最希望它？ (天蝎/处女/双鱼意象)", options:[
+        { t:"一片染血的干枯玫瑰瓣 (致命吸引/天蝎特性)", s:[5,18,8,12,12,20,25,8] },
+        { t:"一块没有任何刻字的古石碑 (灵魂契合/摩羯特性)", s:[18,5,15,20,2,8,15,20] },
+        { t:"一个能连接彼此心房的微型钥匙 (恋爱适配/巨蟹特性)", s:[10,15,12,18,20,15,8,15] },
+        { t:"一张对方沉睡时的黑白照片 (智性魅力/水瓶特性)", s:[8,22,15,10,15,18,20,10] }
     ]},
-    { q:"8. 面前有四种禁果，虽然有毒但能满足愿望，你选？", options:[
-        { t:"永恒的孤独，换取极致的才华", s:[15,5,12,22,2,10,18,25] },
-        { t:"极短的生命，换取瞬间的挚爱", s:[5,22,8,12,18,20,25,5] },
-        { t:"无尽的财富，换取麻木的情感", s:[8,12,15,15,15,12,15,8] },
-        { t:"平凡的人生，换取内心的宁静", s:[12,10,18,18,20,15,2,15] }
+    { q:"8. 面前有四种禁果，虽然有毒但能满足愿望，你选？ (星座内核欲望模型)", options:[
+        { t:"永恒的孤独，换取极致的才华 (水瓶：独立与理想)", s:[18,5,12,22,2,10,18,25] },
+        { t:"极短的生命，换取瞬间的挚爱 (双鱼：梦幻与自我毁灭)", s:[5,22,8,12,18,20,25,5] },
+        { t:"无尽的财富，换取麻木的情感 (金牛/摩羯：物质与稳定)", s:[12,12,15,15,15,12,15,8] },
+        { t:"平凡的人生，换取内心的宁静 (巨蟹/处女：安全感与秩序)", s:[15,10,18,18,20,15,2,15] }
     ]},
-    { q:"9. 如果爱是一场谋杀，你宁愿自己是？", options:[
-        { t:"冷酷的凶手", s:[10,20,12,15,5,12,22,10] },
-        { t:"心甘情愿的被害者", s:[5,15,8,10,18,22,20,5] },
-        { t:"冷静录入案宗的警察", s:[20,5,15,20,5,8,10,15] },
-        { t:"路过却没报警的目击者", s:[15,10,18,12,10,10,15,18] }
+    { q:"9. 如果你必须拥有一种由于过度吸引带来的诅咒，你选？ (狮子/水瓶/天蝎的原型)", options:[
+        { t:"永远无法拒绝任何人 (巨蟹/天秤：共情过度)", s:[5,15,12,10,20,22,18,8] },
+        { t:"永远被众人崇拜但无法被一人理解 (狮子/摩羯：孤独与气场)", s:[20,12,15,20,2,5,15,18] },
+        { t:"只要注视就会被对方疯狂占有 (天蝎：危险吸引)", s:[8,22,8,12,12,20,25,5] },
+        { t:"只爱上自己镜子里的倒影 (双子/水瓶：疏离与精分)", s:[15,8,20,15,5,10,12,22] }
     ]},
-    { q:"10. 异性送你一份礼物，装在漆黑的盒子里，你最希望是？", options:[
-        { t:"一片染血的干枯玫瑰", s:[5,18,8,12,12,20,25,8] },
-        { t:"一把通往对方心房的钥匙", s:[10,15,12,18,20,15,8,15] },
-        { t:"一块没有任何刻字的石碑", s:[18,5,15,20,2,8,15,20] },
-        { t:"一张对方沉睡时的照片", s:[8,22,15,10,15,18,20,10] }
+    { q:"10. 当异性称赞你“特别”，你觉得是在赞美什么？ (星座外显气质原型)", options:[
+        { t:"独一无二的思想 (处女/水瓶：智性魅力)", s:[12,8,5,22,10,15,18,20] },
+        { t:"可爱有趣的灵魂 (双子/射手：异性缘分)", s:[8,15,10,12,20,20,5,15] },
+        { t:"独立清醒的态度 (白羊/摩羯：致命吸引)", s:[18,5,18,20,5,12,20,10] },
+        { t:"温柔包容的教养 (金牛/天秤：恋爱适配)", s:[15,10,12,18,20,18,2,18] }
     ]},
-    // 继续补全至20题... (由于篇幅，后续题目采用逻辑递增，但保证代码可运行)
+    { q:"11. 在突然停电的电梯里，你感觉到对方在黑暗中靠近你，你会？ (天蝎/白羊的荷尔蒙投射)", options:[
+        { t:"僵直不动，等对方开口 (摩羯/处女：被动克制)", s:[20,5,15,10,2,8,12,5] },
+        { t:"大方开玩笑，化解尴尬 (射手/双子：异性缘分)", s:[8,18,10,12,22,20,8,15] },
+        { t:"自信对视，建立气场 (白羊/狮子：致命吸引)", s:[12,22,8,20,8,12,20,18] },
+        { t:"向后一步，保持距离 (水瓶：灵魂深度)", s:[18,5,20,15,5,10,15,12] }
+    ]},
+    { q:"12. 你觉得哪种乐器最能模拟你的心跳？ (四象属性投射)", options:[
+        { t:"沉闷厚实的大提琴 (土象金牛/摩羯：稳定)", s:[18,8,12,18,2,10,15,20] },
+        { t:"空灵缥缈的竖琴 (风象天秤/双鱼：梦幻)", s:[12,10,18,12,20,10,5,12] },
+        { t:"充满爆破感的架子鼓 (火象白羊/狮子：热烈)", s:[5,22,8,10,10,18,20,8] },
+        { t:"沙哑低沉的萨克斯 (水象天蝎/双子：深邃)", s:[10,20,10,15,12,15,22,15] }
+    ]},
+    { q:"13. 一张空白的画像，异性说它代表你，你会画下什么部位？ (星座特征意象)", options:[
+        { t:"一双能看见过去的眼睛 (灵魂深度/水瓶/巨蟹特性)", s:[15,10,12,20,5,12,10,25] },
+        { t:"一张正在说话的嘴唇 (双子/处女/射手特性)", s:[8,15,15,15,10,15,18,12] },
+        { t:"一个看不见脸的后脑勺 (摩羯/金牛/水瓶特性)", s:[20,8,10,10,2,5,10,18] },
+        { t:"一张露出诡异微笑的脸 (致命吸引/天蝎原型)", s:[5,22,8,12,15,20,25,8] }
+    ]},
+    { q:"14. 如果你死后可以选择归宿，你选择？ (星座内核生存模型)", options:[
+        { t:"永远沉在暴风雨前的海底 (水瓶/天蝎意象)", s:[18,8,20,15,2,5,18,12] },
+        { t:"永远睡在玫瑰花瓣里 (金牛/双鱼意象)", s:[5,15,12,18,20,18,2,15] },
+        { t:"永远漂在离家最远的大气层里 (水瓶/风象意象)", s:[15,12,18,20,2,5,15,20] },
+        { t:"永远待在一个没有任何光亮的盒子里 (摩羯/处女意象)", s:[20,5,15,22,2,8,15,18] }
+    ]},
+    { q:"15. 如果明天是世界末日，你最想？ (白羊的热烈、水瓶的冷漠)", options:[
+        { t:"去海边独自看日落 (灵魂深度/水瓶/摩羯特性)", s:[20,5,15,22,2,4,15,12] },
+        { t:"和爱的人疯狂派对 (火象/风象特性)", s:[5,22,10,15,22,18,5,18] },
+        { t:"安静地向所有人告别 (金牛/天秤特性)", s:[18,10,12,18,18,15,15,18] },
+        { t:"大笑，觉得世界终于解脱了 (致命吸引/水瓶特性)", s:[12,18,8,10,12,20,25,10] }
+    ]},
+    { q:"16. 哪种色彩让你联想到极致的快感？ (星座原色投射)", options:[
+        { t:"暗黑色混合着染血的红 (天蝎特性)", s:[5,20,8,12,12,20,25,8] },
+        { t:"纯净的、不带任何灰尘的白 (金牛/处女特性)", s:[18,8,15,20,5,12,10,15] },
+        { t:"热烈的、刺眼的柠檬黄 (白羊/狮子特性)", s:[8,22,10,10,18,20,20,10] },
+        { t:"清冷的、像冰块一样的蓝 (水瓶特性)", s:[12,10,20,15,5,10,15,12] }
+    ]},
+    { q:"17. 你的手机里有一个永远不会打出的号码，你觉得那是？ (摩羯/处女/巨蟹意象)", options:[
+        { t:"一个已经去世的人 (巨蟹/双鱼意象)", s:[15,10,12,18,10,20,5,18] },
+        { t:"一个你这辈子都不会再见的人 (摩羯/水瓶意象)", s:[20,8,15,20,2,8,15,20] },
+        { t:"一个你根本不需要打出的人 (智性魅力特性)", s:[12,8,20,15,5,10,15,12] },
+        { t:"你自己的号码 (双子/精分特性)", s:[8,15,10,10,20,15,18,10] }
+    ]},
+    { q:"18. 你的书架上，哪种书的比例最高？ (智性内核模型)", options:[
+        { t:"社科评论或宇宙论 (处女/水瓶：知性与理想)", s:[12,8,5,22,10,15,18,20] },
+        { t:"充满宿命感的诗歌集 (巨蟹/双鱼：梦幻与灵魂)", s:[15,10,12,10,20,22,5,15] },
+        { t:"轻松有趣的治愈系散文 (金牛/射手：治愈与分寸)", s:[18,12,15,18,18,18,2,18] },
+        { t:"悬疑或逻辑严密的推理 (天蝎/摩羯：清冷与理性)", s:[10,15,18,20,5,12,20,10] }
+    ]},
+    { q:"19. 你发现自己是一个异性眼中、没有脸的黑影，你直觉是？ (致命吸引原型)", options:[
+        { t:"感到冒犯并渴望掌控 (天蝎原型)", s:[8,22,8,12,12,20,25,8] },
+        { t:"感到恐惧但忍不住靠近 (双鱼/巨蟹原型)", s:[5,15,12,10,20,22,18,5] },
+        { t:"感到冷静且毫无波澜 (摩羯原型)", s:[20,5,15,20,2,8,12,18] },
+        { t:"感到喜悦因为可以自由呼吸 (水瓶原型)", s:[15,8,20,15,5,10,15,22] }
+    ]},
+    { q:"20. 最后一个问题：你真的希望被人完全了解吗？ (灵魂内核模型)", options:[
+        { t:"极致的渴望，那是一种宿命 (巨蟹/双鱼原型)", s:[5,15,8,10,20,22,18,5] },
+        { t:"理智的拒绝，那是一种危险 (天蝎/摩羯原型)", s:[18,12,15,20,5,12,22,10] },
+        { t:"温和的随缘，那是一种舒适 (金牛/天秤原型)", s:[15,10,18,18,20,15,2,15] },
+        { t:"荒诞的微笑，那是一种幻觉 (水瓶/精分原型)", s:[10,8,20,15,12,10,12,25] }
+    ]}
 ];
 
-// 自动生成剩余题目逻辑 (11-20题)
-const extraQs = [
-    "11. 突然停电的电梯里，你感觉到对方在黑暗中靠近你的气息，你会？",
-    "12. 你觉得哪种乐器最能模拟你的心跳？",
-    "13. 在一张空白的画像上，你必须画下一个部位，你会画？",
-    "14. 如果你可以选择死后的归宿，你选择？",
-    "15. 面对喜欢的人，你的保护色通常是？",
-    "16. 深夜的街道，一只黑猫盯着你，你觉得它在嘲笑你的？",
-    "17. 哪种色彩让你联想到极致的快感？",
-    "18. 你的手机里有一个永远不会打出的号码，那是谁？",
-    "19. 如果你是神，你会如何惩罚背叛你的恋人？",
-    "20. 最后一个问题：你真的希望被人完全了解吗？"
-];
-extraQs.forEach((txt, i) => {
-    questions.push({ q:txt, options:[
-        { t:"极致且疯狂的选择", s:[5,22,8,10,12,20,25,10] },
-        { t:"理智且疏离的选择", s:[20,5,18,22,2,8,12,18] },
-        { t:"温柔且包容的选择", s:[12,15,12,18,20,18,5,15] },
-        { t:"随性且自由的选择", s:[10,12,15,12,15,15,15,12] }
-    ]});
-});
-
+// --------------------------------------------------
+// 4. 逻辑控制脚本
+// --------------------------------------------------
 let cur = 0;
 let userAns = [];
 let scores = [0,0,0,0,0,0,0,0];
 const dims = ["清冷感", "张力值", "初见力", "智性魅力", "温柔度", "适配力", "危险吸引", "灵魂深度"];
 
-function startQuiz(){
+function startQuiz() {
     document.getElementById('cover-section').style.display='none';
     document.getElementById('quiz-section').style.display='flex';
     loadQ();
 }
 
-function loadQ(){
+function loadQ() {
     const q = questions[cur];
     document.getElementById('q-text').innerText = q.q;
     document.getElementById('progress-fill').style.width = ((cur+1)/questions.length*100)+'%';
@@ -207,26 +281,40 @@ function loadQ(){
     box.innerHTML = '';
     q.options.forEach((o, i) => {
         const b = document.createElement('button');
-        b.className = 'option-btn';
+        b.className = 'option-btn' + (userAns[cur] === i ? ' selected' : ''); // 加强视觉：选中态
         b.innerText = o.t;
-        b.onclick = () => { userAns[cur]=i; if(cur<questions.length-1){cur++;loadQ();}else{showRes();} };
+        b.onclick = () => { selectOpt(i); };
         box.appendChild(b);
     });
     document.getElementById('prev-btn').style.visibility = cur===0?'hidden':'visible';
 }
 
+function selectOpt(idx) {
+    userAns[cur] = idx;
+    if(cur < questions.length - 1){
+        cur++;
+        setTimeout(loadQ, 200); // 100ms 延迟，增加点击仪式感
+    }else{
+        setTimeout(showRes, 200);
+    }
+}
+
 function prevQuestion(){ if(cur>0){ cur--; loadQ(); } }
 
-function showRes(){
+// --------------------------------------------------
+// 5. 新共鸣版结果分析系统
+// --------------------------------------------------
+function showRes() {
     document.getElementById('quiz-section').style.display='none';
     document.getElementById('result-section').style.display='block';
     
+    // 基础计算
     let final = [0,0,0,0,0,0,0,0];
-    userAns.forEach((idx, qidx) => {
-        questions[qidx].options[idx].s.forEach((v, i) => final[i]+=v);
+    userAns.forEach((ansIdx, qidx) => {
+        questions[qidx].options[ansIdx].s.forEach((v, i) => final[i]+=v);
     });
 
-    // 算法：映射到60-100分，增加极差
+    // 归一化：映射到 55-100 分，增加极差，拉开差距
     const normalized = final.map(v => {
         let n = Math.round((v / 380) * 100) + 30;
         return Math.min(100, Math.max(55, n));
@@ -236,23 +324,49 @@ function showRes(){
 
     const maxVal = Math.max(...normalized);
     const topIdx = normalized.indexOf(maxVal);
-    let tag = "", desc = "";
 
-    // 8种深度人格结局
+    // 🌟 星座共鸣详解结果 (12种结局)
+    const zodiacDict = {
+        "摩羯座": { elem: "土象/土星守护", desc: "极致的理智克制，眼神从不盲目。你是感情里真正的掌控者，哪怕在最热烈的时刻，对方也能感觉到你内心深处不被任何人动摇的清冷秩序。这种深不可测的稳定，正是异性想不断探索、不断坠落的引力来源。" },
+        "水瓶座": { elem: "风象/天王星守护", desc: "极致的独立疏离，灵魂从不随波逐流。你的吸引力来源于一种荒诞的幻觉：哪怕在对方怀里，你也像是一个随时会蒸发的灵魂诗人。你并不需要懂爱，只要你站在那里，就是一种极致的精分奇点。" },
+        "双鱼座": { elem: "水象/海王星守护", desc: "极致的梦幻治愈，灵魂深邃不可触碰。你是这个喧嚣世界里的最后一抹白月光。你的每一个眼神都在提供情绪价值，能治愈异性内心的所有褶皱。你是让人一旦爱上，就舍不得醒来的梦境织梦者。" },
+        "白羊座": { elem: "火象/火星守护", desc: "极致的热烈冲动，气场极强。你从不掩饰自己的占有欲，眼神直接而带有穿透力。你的恋爱适配度很高，因为你追求的是一种直接的灵魂博弈。你是极具占有欲的禁忌黑洞，让人瞬间沦陷。" },
+        "金牛座": { elem: "土象/金星守护", desc: "极致的稳定分寸，审美与审美平衡极佳。你的初见力并不惊艳，但胜在踏实与质感。你重视陪伴与安全感，能提供极高强度的安全港湾。相处越久越能发现你的智性魅力，属于耐看型的高岭之花。" },
+        "双子座": { elem: "风象/水星守护", desc: "极致的灵动有趣，异性缘极强。你是派对里的焦点，灵魂永远分叉、永远充满好奇心。你的致命吸引在于那份不可预测，像是一个拥有多面人格的森林精灵，没有人能完全拥有你。" },
+        "巨蟹座": { elem: "水象/月亮守护", desc: "极致的温柔共情，灵魂深处带有宿命感。你的吸引力来源于一种无条件的治愈与包容，能给伴侣长久的安全感与陪伴。你是让人一眼就想和你过一辈子的‘毒药’，属于让人越爱越深、舍不得离开的类型。" },
+        "狮子座": { elem: "火象/太阳守护", desc: "极致的热烈占有，初见力极强。你自带高级感与辨识度，外在呈现自信得体。你重视精神连接，性格有边界感且独立。你是致命引力满格的灵魂掌控者，让人欲罢不能。" },
+        "处女座": { elem: "土象/水星守护", desc: "极致的智性清冷，性格有主见、通透且慢热。你的初见力偏平淡温和，但相处久了，你身体里那种完美的秩序感和极具深度的内心世界会被激发出来。你是深邃系、需要用灵魂深度换取深度关系的类型。" },
+        "天秤座": { elem: "风象/金星守护", desc: "极致的优雅大方，气场舒服平衡。你的致命吸引极强，因为你的每一个举止都不尖锐、没有攻击性，能给对方极大的舒适度。你重视平衡与独立态度，属于细水长流、让人越来越上瘾的人间微光。" },
+        "天蝎座": { elem: "水象/冥王星守护", desc: "极致的张力致命，危险吸引满格。你身上有一种冷酷且不留痕迹的魅力。你的致命引力来源于一种通透且独立的态度，你从不盲目恋爱。这种极致的清醒，才是异性想掌控、想征服的根源。" },
+        "射手座": { elem: "火象/木星守护", desc: "极致的热烈自由，灵魂永远向往远方。你的异性缘表现极佳，性格有张力且自信舒展，擅长情绪拉扯，很容易让人一见钟情。你是极富共情能力的灵魂精灵，和你恋爱永遠不会无聊。" }
+    };
+    
+    // 多维度多元化分析 (8种结局模版)
     const results = [
-        {t:"月之暗面 · 孤高者", d:"你有着极强的清冷感和智性魅力。在异性眼中，你像是一座无法逾越的雪山，你的吸引力来源于那份拒绝平庸的孤傲。只有足够强大的人才敢试图靠近你。"},
-        {t:"极夜火焰 · 掌控者", d:"你的张力值与危险吸引几乎满格。你擅长情绪拉扯，对方会在不知不觉中沦为你的信徒。你从不掩饰自己的欲望，这种极致的真诚反而最让人疯狂。"},
-        {t:"流浪诗人 · 自由魂", d:"你的初见力极佳，灵魂深度让人着迷。你追求的是一种精神上的共振。普通的恋爱无法填补你的空虚，你需要一个能读懂你沉默的人。"},
-        {t:"深海明珠 · 守望者", d:"温柔度与适配力是你的底色。你给人一种如沐春风的舒适感，是这个喧嚣世界里最安稳的港湾。你是那种让人一旦爱上，就再也无法离开的‘毒药’。"},
-        {t:"荒野之狼 · 观测者", d:"你独立、清醒、且富有攻击性。异性会被你那种‘不属于任何人’的气息所激怒，进而产生强烈的征服欲。你才是感情里真正的猎人。"},
-        {t:"迷雾森林 · 织梦者", d:"你擅长制造美妙的幻觉。在你温柔的攻势下，对方会逐渐丧失理智。你就像一朵盛开在午夜的花，美丽但带有致命的香气。"},
-        {t:"永恒极光 · 纯粹者", d:"你有着罕见的灵魂深度。你并不在意肉欲的狂欢，你寻找的是灵魂的契合。这种极致的纯粹，往往让那些功利的人在你面前感到自惭形秽。"},
-        {t:"引力奇点 · 虚无者", d:"你是一个谜。哪怕在最亲密的时刻，对方也觉得无法完全拥有你。这种深不可测的神秘，正是你吸引异性不断探索、不断坠落的根源。"}
+        {t:"清冷系·月之孤高", d:"你有着极强的清冷感和智性魅力。在异性眼中，你像是一座拒绝采摘、不易靠近的雪山。你的吸引力来源于那份拒绝平庸的孤傲。哪怕在热烈的关系里，你身体里依然住着一个永远不属于任何人的孤独客。"},
+        {t:"禁忌系·引力黑洞", d:"你的危险吸引与张力值几乎满格。你擅长情绪拉扯，眼神、谈吐都自带让人无法抗拒的魅力。对方会在不知不觉中沦为你的信徒，明知危险仍忍不住靠近。你是最容易让人一见钟情、越陷越深的人格。"},
+        {t:"治愈系·人间微光", d:"你拥有极强的共情能力和恋爱适配力。和你在一起时，异性会感到前所未有的放松和舒适。你并不急于表现自我，而是提供温暖的陪伴。你是那种让人‘想跟你过一辈子’、离不开你的温柔港湾。"},
+        {t:"深邃系·极地海洋", d:"你有着极罕见的灵魂深度。异性初见你可能觉得普通、慢热，但一旦开始深度交流，就会被你丰盈、甚至有些忧郁的内心世界所震撼。普通恋爱无法填补你的空虚，你需要一个灵魂同频的人。"},
+        {t:"灵动系·多面精灵", d:"你身上有一种不可预测的灵性。初见力很高，举止得体又不失棱角。和你聊天是享受，哪怕只是简单的对话也能让人心情愉悦。异性会被你的幽默和灵气吸引，但又抓不住你。"},
+        {t:"深渊系·荒野独行", d:"你清醒、独立且克制，致命引力来源于一种通透。在感情里你就像是个观测者，异性会被你身体里那种‘不被任何人拥有’的气息所激怒，进而产生强烈的占有欲，你才是感情里真正的猎人。"},
+        {t:"纯粹系·永恒极光", d:"你有着通透独立且极致纯粹的灵魂。你不在意表面社交，更重视灵魂共鸣与适配。这种极致纯粹，往往让那些功利、世俗的人在你面前感到自惭形秽。你需要一个成熟、能读懂你寂寞的人。"},
+        {t:"奇点系·神秘黑影", d:"你是一个谜。哪怕在最亲密的时刻，对方也觉得无法完全拥有你。这种深不可测的神秘感、智性清冷，正是你吸引异性不断探索、不断坠落的根源，你永远是感情里的一道无解命题。"}
     ];
     
-    const r = results[topIdx] || results[0];
-    document.getElementById('result-tag').innerText = r.t;
-    document.getElementById('analysis-content').innerText = r.d;
+    const zodiacRes = zodiacDict[userZodiac] || zodiacDict["天蝎座"];
+    document.getElementById('result-tag').innerText = `精分·${userZodiac}`;
+    document.getElementById('result-title').innerText = results[topIdx].t;
+    
+    // 渲染结果
+    document.getElementById('zodiac-analysis').innerHTML = `<strong>🌟 星座共鸣解析 (${userZodiac})：</strong><br>${zodiacRes.desc}`;
+    document.getElementById('deep-analysis').innerHTML = `<strong>🛡️ 深度灵魂分析：</strong><br>${results[topIdx].d}`;
+
+    document.getElementById('dimensions-details').innerHTML = normalized.map((sc, i) => `
+        <div class="dimension-card">
+            <div style="font-weight:600; color:var(--primary); font-size:15px; margin-bottom:5px;">${dims[i]}：${sc}分</div>
+            <div style="font-size:13.5px; color:#666;">${sc > 85 ? '极富吸引力，辨识度极高。' : (sc > 70 ? '表现不错，舒服且稳定。' : '偏内敛慢热，容易被忽略。')}</div>
+        </div>
+    `).join('');
 }
 
 function renderRadar(data){
@@ -270,7 +384,7 @@ function renderRadar(data){
             }]
         },
         options:{
-            scales:{ r:{ min:50, max:100, ticks:{display:false}, grid:{color:'rgba(0,0,0,0.05)'} } },
+            scales:{ r:{ min:50, max:100, ticks:{display:false}, grid:{color:'rgba(0,0,0,0.05)'}, angleLines:{color:'rgba(0,0,0,0.05)'}, pointLabels:{font:{size:13.5, family:'inherit'}} } },
             plugins:{ legend:{display:false} }
         }
     });
